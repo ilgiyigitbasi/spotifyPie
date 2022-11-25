@@ -1,32 +1,53 @@
+
+import Charts from "../../src/charts";
+import {useEffect, useLayoutEffect, useState} from "react";
+
 export default function Index() {
-  return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
+
+    const [token, setToken] = useState("")
+
+    const CLIENT_ID = "e06a8e4468034056a35e699e61e7b0cb"
+    const REDIRECT_URI = "http://localhost:3000"
+    const scopes = 'user-top-read'
+
+
+
+    useEffect(() => {
+
+        console.log('render')
+           const hash = window.location.hash
+               .substring(1)
+               .split("&")
+               .reduce(function (initial, item) {
+                   if (item) {
+                       let parts = item.split("=");
+                       initial[parts[0]] = decodeURIComponent(parts[1]);
+                   }
+                   return initial;
+               }, {});
+           setToken(hash.access_token)
+
+
+
+    }, []);
+
+
+    let url = 'https://accounts.spotify.com/authorize';
+    url += '?response_type=token';
+    url += '&client_id=' + encodeURIComponent(CLIENT_ID);
+    url += '&scope=' + encodeURIComponent(scopes);
+    url += '&redirect_uri=' + encodeURIComponent(REDIRECT_URI);
+
+    return (
+        <>
+            {token ? <div>
+
+                <Charts token={token}/>
+
+            </div> : <button> Login
+                <a href={url}>LOGIN</a>
+            </button>}
+
+        </>
+    );
 }
