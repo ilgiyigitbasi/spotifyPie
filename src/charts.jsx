@@ -12,7 +12,6 @@ const Charts = (props) => {
 
         window.location.hash= ''
 
-        console.log(props.token !== '', 'bool')
         if (props.token !== '') {
             getTopArtists()
             getTopTracks()
@@ -26,9 +25,13 @@ const Charts = (props) => {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + props.token
         }
-        axios.get('https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=30', {headers}).then((res) => {
+        axios.get('https://api.spotify.com/v1/me/top/artists?time_range=medium_term&limit=20', {headers}).then((res) => {
+
+            console.log(res.data.items)
             let arr = res.data.items.map((i) => i.name)
             setArtists(arr)
+            let arrGenre = res.data.items.map((i) => i.genres)
+            console.log(arrGenre.flat().reduce((cnt, cur)=>  (cnt[cur] = cnt[cur] + 1 || 1, cnt), {}))
         })
     }
     function getTopTracks() {
@@ -37,8 +40,9 @@ const Charts = (props) => {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + props.token
         }
-        axios.get('https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=30', {headers}).then((res) => {
+        axios.get('https://api.spotify.com/v1/me/top/tracks?time_range=long_term&limit=50', {headers}).then((res) => {
 
+            console.log(res.data.items)
             let arr = []
             for (const element of res.data.items) {
 
@@ -55,6 +59,7 @@ const Charts = (props) => {
         })
 
     }
+
 
     return (
         <>
